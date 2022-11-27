@@ -23,7 +23,7 @@ func main() {
 
 	database.InitDB()
 	defer database.CloseDB()
-	database.Migrate()
+	// database.Migrate()
 
 	router := chi.NewRouter()
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))

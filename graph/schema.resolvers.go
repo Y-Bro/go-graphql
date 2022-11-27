@@ -6,25 +6,24 @@ package graph
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/Y-bro/go-graphql/graph/model"
+	"github.com/Y-bro/go-graphql/internal/links"
 
 	"github.com/Y-bro/go-graphql/graph/generated"
 )
 
 // CreateLink is the resolver for the createLink field.
 func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
-	link := model.Link{}
-	user := model.User{}
-
+	link := links.Link{}
 	link.Address = input.Address
 	link.Title = input.Title
 
-	user.Name = "test"
+	linkID := link.Save()
 
-	link.User = &user
+	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Address, Address: link.Address}, nil
 
-	return &link, nil
 }
 
 // CreateUser is the resolver for the createUser field.
@@ -44,16 +43,16 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 
 // Links is the resolver for the links field.
 func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
-	links := []*model.Link{}
-	dummLink := &model.Link{
-		Title:   "dummy test",
-		Address: "Dummy adddress",
-		User:    &model.User{Name: "admin"},
+	resLinks := []*model.Link{}
+
+	dbLinks := links.GetAll()
+
+	for _, link := range dbLinks {
+		resLinks = append(resLinks, &model.Link{ID: link.ID, Title: link.Title, Address: link.Address})
+
 	}
 
-	links = append(links, dummLink)
-
-	return links, nil
+	return resLinks, nil
 
 }
 
