@@ -12,6 +12,7 @@ type User {
 
 type Query {
   links: [Link!]!
+  link(input: String!): Link!
 }
 
 input NewLink {

@@ -9,18 +9,16 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/Y-bro/go-graphql/graph/generated"
 	"github.com/Y-bro/go-graphql/graph/model"
 	"github.com/Y-bro/go-graphql/internal/auth"
 	"github.com/Y-bro/go-graphql/internal/links"
 	"github.com/Y-bro/go-graphql/internal/users"
 	"github.com/Y-bro/go-graphql/pkg/jwt"
-
-	"github.com/Y-bro/go-graphql/graph/generated"
 )
 
 // CreateLink is the resolver for the createLink field.
 func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) (*model.Link, error) {
-
 	user := auth.ForContext(ctx)
 
 	fmt.Print(user)
@@ -42,7 +40,6 @@ func (r *mutationResolver) CreateLink(ctx context.Context, input model.NewLink) 
 	}
 
 	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Address, Address: link.Address, User: graphQlUser}, nil
-
 }
 
 // CreateUser is the resolver for the createUser field.
@@ -118,7 +115,32 @@ func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
 	}
 
 	return resLinks, nil
+}
 
+// Link is the resolver for the link field.
+func (r *queryResolver) Link(ctx context.Context, input string) (*model.Link, error) {
+	var linkId = input
+	link := &links.Link{
+		ID: linkId,
+	}
+
+	resLink := &model.Link{}
+
+	link = links.GetLink(linkId)
+
+	fmt.Println("here in Link")
+
+	user := &model.User{}
+
+	user.ID = link.User.ID
+	user.Name = link.User.Username
+
+	resLink.ID = link.ID
+	resLink.Address = link.Address
+	resLink.Title = link.Title
+	resLink.User = user
+
+	return resLink, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

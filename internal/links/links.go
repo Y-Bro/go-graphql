@@ -1,6 +1,7 @@
 package links
 
 import (
+	"fmt"
 	"log"
 
 	database "github.com/Y-bro/go-graphql/internal/pkg/db/migrations/mysql"
@@ -77,5 +78,39 @@ func GetAll() []Link {
 	}
 
 	return links
+
+}
+
+func GetLink(id string) *Link {
+	stmt, err := database.Db.Prepare("select L.id, L.title, L.address, L.UserID, U.Username from Links L inner join Users U on L.UserID = U.ID WHERE L.id = ?")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	link := &Link{}
+	var username string
+	var userId string
+
+	err = stmt.QueryRow(id).Scan(&link.ID, &link.Title, &link.Address, &userId, &username)
+
+	if err != nil {
+		return nil
+	}
+
+	user := &users.User{
+		ID:       userId,
+		Username: username,
+	}
+
+	link.User = user
+
+	fmt.Println("after exec")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return link
 
 }

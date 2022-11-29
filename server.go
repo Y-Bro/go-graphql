@@ -7,6 +7,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+
 	"github.com/Y-bro/go-graphql/graph"
 	"github.com/Y-bro/go-graphql/graph/generated"
 	auth "github.com/Y-bro/go-graphql/internal/auth"
