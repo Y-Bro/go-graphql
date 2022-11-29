@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -36,11 +37,14 @@ func ParseToken(tokenStr string) (string, error) {
 		return SecretKey, nil
 	})
 
+	fmt.Println("Here2", tokenStr)
+
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		username := claims["username"].(string)
 
 		return username, nil
 	} else {
+		fmt.Println("Here")
 		return "", err
 	}
 }

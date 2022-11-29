@@ -35,6 +35,30 @@ func (user *User) Create() {
 	}
 }
 
+func (user *User) Authenticate() bool {
+	stmt, err := database.Db.Prepare("SELECT Password FROM Users where Username = ?")
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	row := stmt.QueryRow(user.Username)
+
+	var hashedPass string
+
+	err = row.Scan(&hashedPass)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		} else {
+			log.Fatal(err)
+		}
+	}
+
+	return CheckPasswordHash(user.Password, hashedPass)
+}
+
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 

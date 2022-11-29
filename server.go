@@ -9,6 +9,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/Y-bro/go-graphql/graph"
 	"github.com/Y-bro/go-graphql/graph/generated"
+	auth "github.com/Y-bro/go-graphql/internal/auth"
 	database "github.com/Y-bro/go-graphql/internal/pkg/db/migrations/mysql"
 	"github.com/go-chi/chi"
 )
@@ -26,6 +27,7 @@ func main() {
 	// database.Migrate()
 
 	router := chi.NewRouter()
+	router.Use(auth.Middleware())
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
 	router.Handle("/", playground.Handler("GraphQL playground", "/query"))

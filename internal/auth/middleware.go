@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -22,12 +23,16 @@ func Middleware() func(http.Handler) http.Handler {
 			header := r.Header.Get("Authorization")
 
 			if header == "" {
+				fmt.Println("Here")
 				next.ServeHTTP(w, r)
+				return
 			}
 
 			tokenStr := header
 
+			fmt.Println("Here")
 			username, err := jwt.ParseToken(tokenStr)
+			fmt.Println("Here")
 
 			if err != nil {
 				http.Error(w, "Token invalid", http.StatusUnauthorized)
